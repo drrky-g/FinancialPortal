@@ -1,11 +1,10 @@
 namespace FinancialPortal.Migrations
 {
-    using FinancialPortal.Enumerations;
+    using FinancialPortal.Helpers;
     using FinancialPortal.Models;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
     using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
     using System.Web.Configuration;
@@ -24,12 +23,17 @@ namespace FinancialPortal.Migrations
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
 
+            var houseHelper = new HouseholdHelper();
+
             // Instance of RoleManager 
             var roleManager = new RoleManager<IdentityRole>(
                 new RoleStore<IdentityRole>(context));
 
+            //Instance of UserManager
+            var userManager = new UserManager<ApplicationUser>(
+                new UserStore<ApplicationUser>(context));
 
-            // If roles do not exist, create roles
+            // Roles
             #region Seeded Roles
             if (!context.Roles.Any(r => r.Name == "Admin"))
             {
@@ -50,50 +54,32 @@ namespace FinancialPortal.Migrations
 
             #endregion
 
-
-            //Instance of UserManager
-            var userManager = new UserManager<ApplicationUser>(
-                new UserStore<ApplicationUser>(context));
-
+            //List of Users (comment)
             #region User Index
             //Avengers Users Seed
 
-            //Admin
             //-----------------------
-            //Derrick (Derrick Gordon) created
-            //Fury (Nick Fury) created image-fury
-
-            //Project Managers
-            //-----------------------
-
-            //Iron Man (Tony Stark) created image-ironman
-            //Captain America (Steve Roders) created image-cap
-            //Black Widow (Natasha Romanoff) created
-            //Captain Marvel (Carol Danvers) created
-            //Black Panther (T'Challa T'Chaka) created
-            //Thor (Thor Odinson) created
-
-            //Developers
-            //------------------------
-
-            //Hulk (Bruce Banner) created
-            //Vision (Victor Shade) created
-            //Ant Man (Scott Lang) created
-            //Dr. Strange (Steven Strange) created
-            //Rocket (Rocket Raccoon) created
-            //Shuri (Shuri T'Chaka) created
-
-            //Submitters
-            //--------------------------
-
-            //Hawkeye (Clint Barton) created
-            //Spider Man (Peter Parker) created
-            //War Machine (James Rhodes) created
-            //Star Lord (Peter Quill) created
-            //Mantis (Mandy Celestine) created
-            //Scarlet Witch (Wanda Maximoff) created
-            //Winter Soldier (James Buchanan) created
-            //Pepper (Virginia Potts) created
+            //Derrick (Derrick Gordon)
+            //Fury (Nick Fury)
+            //Iron Man (Tony Stark)
+            //Captain America (Steve Roders)
+            //Black Widow (Natasha Romanoff)
+            //Captain Marvel (Carol Danvers)
+            //Black Panther (T'Challa T'Chaka)
+            //Thor (Thor Odinson)
+            //Hulk (Bruce Banner)
+            //Vision (Victor Shade)
+            //Ant Man (Scott Lang)
+            //Dr. Strange (Steven Strange)
+            //Rocket (Rocket Raccoon)
+            //Shuri (Shuri T'Chaka)
+            //Hawkeye (Clint Barton)
+            //Spider Man (Peter Parker)
+            //Star Lord (Peter Quill)
+            //Mantis (Mandy Celestine)
+            //Scarlet Witch (Wanda Maximoff)
+            //Winter Soldier (James Buchanan)
+            //Pepper (Virginia Potts)
             //Falcon (Sam Wilson)
             #endregion
 
@@ -103,7 +89,6 @@ namespace FinancialPortal.Migrations
             var demoPassword = WebConfigurationManager.AppSettings["demoPassword"];
             var userPassword = WebConfigurationManager.AppSettings["seededPassword"];
             #endregion
-
 
             //Add Avengers User Accounts
             #region Add Avengers as users.
@@ -173,7 +158,7 @@ namespace FinancialPortal.Migrations
                     FirstName = "Natasha",
                     LastName = "Romanov",
                     Alias = "Black Widow",
-                    AvatarPath = "Avatars/nat.jpg"
+                    AvatarPath = "/Avatars/AvengersAvatars/nat.jpg"
                 }, userPassword);
             }
 
@@ -430,6 +415,151 @@ namespace FinancialPortal.Migrations
             }
             context.SaveChanges();
             #endregion
+
+            //Avenger User Roles
+            #region Role Assignment
+
+            //
+            //Admins:
+
+            userManager.AddToRole("master", "Admin");
+
+
+            //
+            //HeadOfHousehold:
+            userManager.AddToRole("nickfury", "HeadOfHousehold");
+            userManager.AddToRole("starlord", "HeadOfHousehold");
+            userManager.AddToRole("ironman", "HeadOfHousehold");
+            userManager.AddToRole("captamerica", "HeadOfHousehold");
+
+
+            //
+            //HouseholdMember:
+            //nickfury
+            userManager.AddToRole("blackwidow", "HouseholdMember");
+            userManager.AddToRole("captmarvel", "HouseholdMember");
+            userManager.AddToRole("antman", "HouseholdMember");
+            userManager.AddToRole("hawkeye", "HouseholdMember");
+            //starlord
+            //------------------------------------------
+            userManager.AddToRole("rocket", "HouseholdMember");
+            userManager.AddToRole("thorodinson", "HouseholdMember");
+            userManager.AddToRole("mantis", "HouseholdMember");
+            //ironman
+            //------------------------------------------
+            userManager.AddToRole("vision", "HouseholdMember");
+            userManager.AddToRole("warmachine", "HouseholdMember");
+            userManager.AddToRole("pepperpotts", "HouseholdMember");
+            userManager.AddToRole("spiderman", "HouseholdMember");
+            //captain america
+            //------------------------------------------
+            userManager.AddToRole("wintersoldier", "HouseholdMember");
+            userManager.AddToRole("falcon", "HouseholdMember");
+            userManager.AddToRole("blackpanther", "HouseholdMember");
+            userManager.AddToRole("shuri", "HouseholdMember");
+
+            //
+            //NoHousehold:
+            userManager.AddToRole("thehulk", "NoHousehold");
+            userManager.AddToRole("drstrange", "NoHousehold");
+            userManager.AddToRole("scarletwitch", "NoHousehold");
+
+            context.SaveChanges();
+
+            #endregion
+
+            //AccountTypes
+            #region Account Types
+
+            context.AccountTypes.AddOrUpdate(
+                acct => acct.Name,
+                new AccountType { Name = "Checking" },
+                new AccountType { Name = "Investment" },
+                new AccountType { Name = "Savings" });
+            context.SaveChanges();
+
+            #endregion
+
+            //TransactionType
+            #region Transaction Types
+
+            context.TransactionTypes.AddOrUpdate(
+                trans => trans.Name,
+                new TransactionType { Name = "Deposit" },
+                new TransactionType { Name = "Payment" });
+            context.SaveChanges();
+
+            #endregion
+
+            //SeededHouseholds
+            #region Households 
+
+            context.Households.AddOrUpdate(
+                hh => hh.Name,
+                new Household
+                {
+                    Name = "Shield",
+                    Created = DateTime.Now,
+                    Description = "The S.H.I.E.L.D. group."
+                },
+                new Household
+                {
+                    Name = "Guardians",
+                    Created = DateTime.Now,
+                    Description = "The Guardians of the Galaxy (and friends)."
+                },
+                new Household
+                {
+                    Name = "Stark Industries",
+                    Created = DateTime.Now,
+                    Description = "Tony Stark's warmongering business."
+                },
+                new Household
+                {
+                    Name = "Wakandians",
+                    Created = DateTime.Now,
+                    Description = "Members of the Wakanda royal family and their friends."
+                });
+            context.SaveChanges();
+
+            var shieldId = context.Households.FirstOrDefault(house => house.Name == "Shield").Id;
+            var guardiansId = context.Households.FirstOrDefault(house => house.Name == "Guardians").Id;
+            var starkId = context.Households.FirstOrDefault(house => house.Name == "Stark Industries").Id;
+            var wakandaId = context.Households.FirstOrDefault(house => house.Name == "Wakandians").Id;
+
+            #endregion
+
+            //Add users to their households
+            #region Seed UserHouseholds
+
+            //Shield
+            houseHelper.AddUserToHousehold("nickfury", shieldId);
+            houseHelper.AddUserToHousehold("blackwidow", shieldId);
+            houseHelper.AddUserToHousehold("captmarvel", shieldId);
+            houseHelper.AddUserToHousehold("hawkeye", shieldId);
+            houseHelper.AddUserToHousehold("antman", shieldId);
+            //Guardians
+            houseHelper.AddUserToHousehold("starlord", guardiansId);
+            houseHelper.AddUserToHousehold("rocket", guardiansId);
+            houseHelper.AddUserToHousehold("thorodinson", guardiansId);
+            houseHelper.AddUserToHousehold("mantis", guardiansId);
+            //Stark
+            houseHelper.AddUserToHousehold("ironman", starkId);
+            houseHelper.AddUserToHousehold("pepperpots", starkId);
+            houseHelper.AddUserToHousehold("warmachine", starkId);
+            houseHelper.AddUserToHousehold("vision", starkId);
+            houseHelper.AddUserToHousehold("spiderman", starkId);
+            //Wakanda
+            houseHelper.AddUserToHousehold("captamerica", wakandaId);
+            houseHelper.AddUserToHousehold("shuri", wakandaId);
+            houseHelper.AddUserToHousehold("blackpanther", wakandaId);
+            houseHelper.AddUserToHousehold("wintersoldier", wakandaId);
+            houseHelper.AddUserToHousehold("falcon", wakandaId);
+
+            context.SaveChanges();
+
+            #endregion
+
         }
     }
 }

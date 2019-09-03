@@ -17,9 +17,11 @@ namespace FinancialPortal.Models
         public int TypeId { get; set; }
         public int AccountId { get; set; }
         public string UserId { get; set; }
+        public int? BudgetItemId { get; set; }
         //------------------------------------------
         public virtual TransactionType Type { get; set; }
         public virtual BankAccount Account { get; set; }
         public virtual ApplicationUser User { get; set; }
+        public virtual BudgetItem BudgetItem { get; set; }
     }
 }

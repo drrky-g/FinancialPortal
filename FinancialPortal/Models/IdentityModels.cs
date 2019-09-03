@@ -24,13 +24,9 @@ namespace FinancialPortal.Models
         public string Alias { get; set; }
         public string AvatarPath { get; set; }
         //
-        //Virtual
-        public int HouseholdId { get; set; }
-        //------------------------------------------
-        public virtual Household Household { get; set; }
-        //
         //collections
         public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<Household> Households { get; set; }
         //
         //Non-mapped properties
         [NotMapped]
@@ -56,6 +52,7 @@ namespace FinancialPortal.Models
         public ApplicationUser()
         {
             this.Transactions = new HashSet<Transaction>();
+            this.Households = new HashSet<Household>();
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)

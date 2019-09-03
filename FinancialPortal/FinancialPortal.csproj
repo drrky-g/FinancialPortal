@@ -170,9 +170,12 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Enumerations\MyRole.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\HouseholdHelper.cs" />
+    <Compile Include="Helpers\InstanceHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountType.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -190,6 +193,28 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Avatars\AvengersAvatars\antman.jpg" />
+    <Content Include="Avatars\AvengersAvatars\cap.jpg" />
+    <Content Include="Avatars\AvengersAvatars\danvers.jpg" />
+    <Content Include="Avatars\AvengersAvatars\falcon.jpg" />
+    <Content Include="Avatars\AvengersAvatars\fury.jpeg" />
+    <Content Include="Avatars\AvengersAvatars\hawkeye.jpg" />
+    <Content Include="Avatars\AvengersAvatars\hulk.jpg" />
+    <Content Include="Avatars\AvengersAvatars\ironman.jpg" />
+    <Content Include="Avatars\AvengersAvatars\mantis.png" />
+    <Content Include="Avatars\AvengersAvatars\nat.jpg" />
+    <Content Include="Avatars\AvengersAvatars\pepperpotts.jpg" />
+    <Content Include="Avatars\AvengersAvatars\rocket.jpg" />
+    <Content Include="Avatars\AvengersAvatars\scarletwitch.jpg" />
+    <Content Include="Avatars\AvengersAvatars\shuri.png" />
+    <Content Include="Avatars\AvengersAvatars\spiderman.png" />
+    <Content Include="Avatars\AvengersAvatars\starlord.jpg" />
+    <Content Include="Avatars\AvengersAvatars\strange.jpg" />
+    <Content Include="Avatars\AvengersAvatars\tchalla.jpg" />
+    <Content Include="Avatars\AvengersAvatars\thor.jpg" />
+    <Content Include="Avatars\AvengersAvatars\vision.jpg" />
+    <Content Include="Avatars\AvengersAvatars\warmachine.jpg" />
+    <Content Include="Avatars\AvengersAvatars\wintersoldier.jpg" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -200,6 +225,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="private.config" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -248,7 +274,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Avatars\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

@@ -8,7 +8,7 @@ namespace FinancialPortal.Models
     public class TransactionType
     {
         public int Id { get; set; }
-        public int Name { get; set; }
+        public string Name { get; set; }
         //
         //collection
         public virtual ICollection<Transaction> Transactions { get; set; }
