@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿
 
 namespace FinancialPortal.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Web;
     public class Household
     {
         public int Id { get; set; }
@@ -20,12 +21,14 @@ namespace FinancialPortal.Models
         [Display (Name = "Description")]
         [StringLength(140, ErrorMessage = "Household descriptions are limited to 140 characters.")]
         public string Description { get; set; }
+        public string HeadOfHouseId { get; set; }
         //
         //collections
         [Display (Name = "Household Accounts")]
         public virtual ICollection<BankAccount> BankAccounts { get; set; }
         public virtual ICollection<Budget> Budgets { get; set; }
         public virtual ICollection<ApplicationUser> Users { get; set; }
+        
 
         //constructor
         public Household()

@@ -39,10 +39,6 @@ namespace FinancialPortal.Migrations
             {
                 roleManager.Create(new IdentityRole { Name = "Admin" });
             }
-            if (!context.Roles.Any(r => r.Name == "HeadOfHousehold"))
-            {
-                roleManager.Create(new IdentityRole { Name = "HeadOfHousehold" });
-            }
             if (!context.Roles.Any(r => r.Name == "HouseholdMember"))
             {
                 roleManager.Create(new IdentityRole { Name = "HouseholdMember" });
@@ -51,7 +47,6 @@ namespace FinancialPortal.Migrations
             {
                 roleManager.Create(new IdentityRole { Name = "NoHousehold" });
             }
-
             #endregion
 
             //List of Users (comment)
@@ -426,11 +421,11 @@ namespace FinancialPortal.Migrations
 
 
             //
-            //HeadOfHousehold:
-            userManager.AddToRole("nickfury", "HeadOfHousehold");
-            userManager.AddToRole("starlord", "HeadOfHousehold");
-            userManager.AddToRole("ironman", "HeadOfHousehold");
-            userManager.AddToRole("captamerica", "HeadOfHousehold");
+            //HeadOfHouse:
+            userManager.AddToRole("nickfury", "HouseholdMember");
+            userManager.AddToRole("starlord", "HouseholdMember");
+            userManager.AddToRole("ironman", "HouseholdMember");
+            userManager.AddToRole("blackpanther", "HouseholdMember");
 
 
             //
@@ -451,11 +446,11 @@ namespace FinancialPortal.Migrations
             userManager.AddToRole("warmachine", "HouseholdMember");
             userManager.AddToRole("pepperpotts", "HouseholdMember");
             userManager.AddToRole("spiderman", "HouseholdMember");
-            //captain america
+            //black panther
             //------------------------------------------
             userManager.AddToRole("wintersoldier", "HouseholdMember");
             userManager.AddToRole("falcon", "HouseholdMember");
-            userManager.AddToRole("blackpanther", "HouseholdMember");
+            userManager.AddToRole("captamerica", "HouseholdMember");
             userManager.AddToRole("shuri", "HouseholdMember");
 
             //
@@ -465,7 +460,6 @@ namespace FinancialPortal.Migrations
             userManager.AddToRole("scarletwitch", "NoHousehold");
 
             context.SaveChanges();
-
             #endregion
 
             //AccountTypes
@@ -475,9 +469,9 @@ namespace FinancialPortal.Migrations
                 acct => acct.Name,
                 new AccountType { Name = "Checking" },
                 new AccountType { Name = "Investment" },
-                new AccountType { Name = "Savings" });
+                new AccountType { Name = "Savings" },
+                new AccountType { Name = "Credit" });
             context.SaveChanges();
-
             #endregion
 
             //TransactionType
@@ -488,7 +482,6 @@ namespace FinancialPortal.Migrations
                 new TransactionType { Name = "Deposit" },
                 new TransactionType { Name = "Payment" });
             context.SaveChanges();
-
             #endregion
 
             //SeededHouseholds
@@ -500,25 +493,29 @@ namespace FinancialPortal.Migrations
                 {
                     Name = "Shield",
                     Created = DateTime.Now,
-                    Description = "The S.H.I.E.L.D. group."
+                    Description = "The S.H.I.E.L.D. group.",
+                    HeadOfHouseId = "nickfury"
                 },
                 new Household
                 {
                     Name = "Guardians",
                     Created = DateTime.Now,
-                    Description = "The Guardians of the Galaxy (and friends)."
+                    Description = "The Guardians of the Galaxy (and friends).",
+                    HeadOfHouseId = "starlord"
                 },
                 new Household
                 {
                     Name = "Stark Industries",
                     Created = DateTime.Now,
-                    Description = "Tony Stark's warmongering business."
+                    Description = "Tony Stark's warmongering business.",
+                    HeadOfHouseId = "ironman"
                 },
                 new Household
                 {
                     Name = "Wakandians",
                     Created = DateTime.Now,
-                    Description = "Members of the Wakanda royal family and their friends."
+                    Description = "Members of the Wakanda royal family and their friends.",
+                    HeadOfHouseId = "blackpanther"
                 });
             context.SaveChanges();
 
@@ -526,7 +523,6 @@ namespace FinancialPortal.Migrations
             var guardiansId = context.Households.FirstOrDefault(house => house.Name == "Guardians").Id;
             var starkId = context.Households.FirstOrDefault(house => house.Name == "Stark Industries").Id;
             var wakandaId = context.Households.FirstOrDefault(house => house.Name == "Wakandians").Id;
-
             #endregion
 
             //Add users to their households
@@ -557,7 +553,6 @@ namespace FinancialPortal.Migrations
             houseHelper.AddUserToHousehold("falcon", wakandaId);
 
             context.SaveChanges();
-
             #endregion
 
         }

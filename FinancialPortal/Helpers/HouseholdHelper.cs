@@ -1,11 +1,7 @@
-﻿using FinancialPortal.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace FinancialPortal.Helpers
+﻿namespace FinancialPortal.Helpers
 {
+    using FinancialPortal.Models;
+
     public class HouseholdHelper 
     {
 
