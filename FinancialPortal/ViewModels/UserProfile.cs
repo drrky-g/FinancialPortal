@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace FinancialPortal.ViewModels
+﻿namespace FinancialPortal.ViewModels
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class UserProfileVM
     {
         public string Id { get; set; }

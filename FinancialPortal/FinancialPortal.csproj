@@ -175,8 +175,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HouseholdHelper.cs" />
+    <Compile Include="Helpers\ImageUploader.cs" />
     <Compile Include="Helpers\InstanceHelper.cs" />
     <Compile Include="Helpers\SeedHelper.cs" />
+    <Compile Include="Helpers\SlugHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountType.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -192,6 +194,7 @@
     <Compile Include="Models\TransactionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\UserProfile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Avatars\AvengersAvatars\antman.jpg" />
@@ -546,7 +549,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

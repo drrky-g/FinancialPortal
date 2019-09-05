@@ -1,6 +1,4 @@
-﻿
-
-namespace FinancialPortal.Controllers
+﻿namespace FinancialPortal.Controllers
 {
     using System;
     using System.Linq;
@@ -280,7 +278,19 @@ namespace FinancialPortal.Controllers
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callback = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, protocol: Request.Url.Scheme);
+                var emailFrom = WebConfigurationManager.AppSettings["smtpEmailFrom"];
+                var email = new MailMessage(emailFrom, model.Email)
+                {
+                    IsBodyHtml = true,
+                    Subject = "Password Recovery - MoneyApp",
+                    Body = $"Click <a href={callback}>here</a> to reset your MoneyApp password."
+                };
 
+                var svc = new EmailService();
+                await svc.SendAsync(email);
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
                 // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
                 // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
@@ -459,8 +469,6 @@ namespace FinancialPortal.Controllers
 
         //
         // POST: /Account/LogOff
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
