@@ -65,6 +65,19 @@ namespace FinancialPortal.Models
     public class RegisterViewModel
     {
         [Required]
+        [StringLength(15, ErrorMessage = "First Name must be below 15 characters.", MinimumLength = 1)]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+        [Required]
+        [StringLength(20, ErrorMessage = "Last name must be below 20 characters.", MinimumLength = 1)]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+        [StringLength(15, ErrorMessage = "Nickname must be below 15 characters.", MinimumLength = 1)]
+        [Display(Name = "Nickname")]
+        public string Alias { get; set; }
+        [Display(Name = "Profile Picture")]
+        public string AvatarPath { get; set; }
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }

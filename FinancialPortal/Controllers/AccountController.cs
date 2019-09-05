@@ -1,22 +1,28 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
-using FinancialPortal.Models;
+﻿
 
 namespace FinancialPortal.Controllers
 {
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Web;
+    using System.Web.Mvc;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.Owin;
+    using Microsoft.Owin.Security;
+    using FinancialPortal.Models;
+    using FinancialPortal.Helpers;
+    using System.IO;
+    using System.Web.Configuration;
+    using System.Net.Mail;
+    using FinancialPortal.ViewModels;
+
     [Authorize]
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext db;
 
         public AccountController()
         {
@@ -50,6 +56,44 @@ namespace FinancialPortal.Controllers
             {
                 _userManager = value;
             }
+        }
+
+        //GET: UpdateProfile
+        public ActionResult UpdateProfile(string userId)
+        {
+            var me = db.Users.Find(userId);
+
+            var profile = new UserProfileVM()
+            {
+                Id = me.Id,
+                FirstName = me.FirstName,
+                LastName = me.LastName,
+                Alias = me.Alias,
+                ProfilePicture = me.AvatarPath,
+                Email = me.Email
+            };
+            return View(profile);
+        }
+        [Authorize]
+        //POST: UpdateProfile
+        public ActionResult UpdateProfile([Bind( Include = "Id,FirstName,LastName,Alias,Email,AvatarPath")]UserProfileVM changes, HttpPostedFileBase picture)
+        {
+            var me = db.Users.Find(changes.Id);
+            if (ImageUploader.IsWebFriendlyImage(picture))
+            {
+                var file = Path.GetFileNameWithoutExtension(picture.FileName);
+                var ext = Path.GetExtension(picture.FileName);
+                var format = $"{SlugHelper.CreateSlug($"{file}{DateTimeOffset.Now}")}{ext}";
+                picture.SaveAs(Path.Combine(Server.MapPath("~/Avatars/"), format));
+                me.AvatarPath = "/Avatars/" + format;
+            }
+
+            me.FirstName = changes.FirstName;
+            me.LastName = changes.LastName;
+            me.Email = changes.Email;
+            me.Alias = changes.Alias;
+
+            return View(changes);
         }
 
         //
@@ -147,21 +191,49 @@ namespace FinancialPortal.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(RegisterViewModel model, HttpPostedFileBase AvatarPath)
         {
+            model.AvatarPath = "/Avatars/defaultAvatar.jpg";
+            if (ImageUploader.IsWebFriendlyImage(AvatarPath))
+            {
+                var file = Path.GetFileNameWithoutExtension(AvatarPath.FileName);
+                var ext = Path.GetExtension(AvatarPath.FileName);
+
+                var slug = SlugHelper.CreateSlug($"{file}{DateTimeOffset.Now}");
+                var format = $"{slug}{ext}";
+
+                AvatarPath.SaveAs(Path.Combine(Server.MapPath("~/Avatars/"), format));
+                model.AvatarPath = "/Avatars/" + format;
+            }
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    Alias = model.Alias,
+                    AvatarPath = model.AvatarPath
+                };
+
+
                 var result = await UserManager.CreateAsync(user, model.Password);
+
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code=code }, protocol: Request.Url.Scheme);
+                    var emailFrom = WebConfigurationManager.AppSettings["smtpEmailFrom"];
+                    var email = new MailMessage(emailFrom, model.Email)
+                    {
+                        Subject = "Confirm your MoneyApp account",
+                        Body = $"Please click <a href={callbackUrl}>here</a> to confirm your account.",
+                        IsBodyHtml = true
+                    };
+
+                    var svc = new EmailService();
+                    await svc.SendAsync(email);
 
                     return RedirectToAction("Index", "Home");
                 }

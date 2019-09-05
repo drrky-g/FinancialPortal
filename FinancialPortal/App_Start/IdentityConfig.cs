@@ -11,18 +11,43 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using FinancialPortal.Models;
+using System.Net.Mail;
+using System.Web.Configuration;
+using System.Net;
 
 namespace FinancialPortal
 {
-    public class EmailService : IIdentityMessageService
+    public class EmailService
     {
-        public Task SendAsync(IdentityMessage message)
+        public async Task SendAsync(MailMessage message)
         {
-            // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            var name = WebConfigurationManager.AppSettings["smtpUserName"];
+            var pw = WebConfigurationManager.AppSettings["smtpPassword"];
+            var host = WebConfigurationManager.AppSettings["smtpHost"];
+            int port = Convert.ToInt32(WebConfigurationManager.AppSettings["smtpPort"]);
+
+            using (var mail = new SmtpClient()
+            {
+                Host = host,
+                Port = port,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(name, pw)
+            })
+            {
+                try
+                {
+                    await mail.SendMailAsync(message);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    await Task.FromResult(0);
+                }
+            }
         }
     }
-
     public class SmsService : IIdentityMessageService
     {
         public Task SendAsync(IdentityMessage message)
