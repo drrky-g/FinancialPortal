@@ -20,7 +20,7 @@
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private ApplicationDbContext db;
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         public AccountController()
         {
@@ -114,18 +114,29 @@
             {
                 return View(model);
             }
-
+            var me = UserManager.FindByEmail(model.Email);
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    if(returnUrl != null)
+                    {
+                        return RedirectToLocal(returnUrl);
+                    }
+                    else if(me.Households.Count == 0)
+                    {
+                        return RedirectToAction("Lobby", "Home");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, model.RememberMe });
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
@@ -233,7 +244,7 @@
                     var svc = new EmailService();
                     await svc.SendAsync(email);
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Lobby", "Home");
                 }
                 AddErrors(result);
             }
@@ -273,33 +284,21 @@
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
-                {
-                    // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
-                }
-                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                var callback = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, protocol: Request.Url.Scheme);
-                var emailFrom = WebConfigurationManager.AppSettings["smtpEmailFrom"];
-                var email = new MailMessage(emailFrom, model.Email)
+                string c = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var cb = Url.Action("ResetPassword", "Account", new { userId = user.Id, c }, protocol: Request.Url.Scheme);
+                var from = WebConfigurationManager.AppSettings["smtpEmailFrom"];
+                var email = new MailMessage(from, model.Email)
                 {
                     IsBodyHtml = true,
                     Subject = "Password Recovery - MoneyApp",
-                    Body = $"Click <a href={callback}>here</a> to reset your MoneyApp password."
+                    Body = $"Click <a href={cb}>here</a> to reset your MoneyApp password."
                 };
 
                 var svc = new EmailService();
                 await svc.SendAsync(email);
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
-                // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
-            // If we got this far, something failed, redisplay form
             return View(model);
         }
 
