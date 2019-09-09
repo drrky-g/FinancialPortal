@@ -195,6 +195,7 @@
     <Compile Include="Models\TransactionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\CreateHouseVM.cs" />
     <Compile Include="ViewModels\UserProfile.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -547,12 +548,12 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Households\Create.cshtml" />
     <Content Include="Views\Households\Delete.cshtml" />
     <Content Include="Views\Households\Details.cshtml" />
     <Content Include="Views\Households\Edit.cshtml" />
     <Content Include="Views\Households\Index.cshtml" />
     <Content Include="Views\Home\Lobby.cshtml" />
+    <Content Include="Views\Households\CreateHouse.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

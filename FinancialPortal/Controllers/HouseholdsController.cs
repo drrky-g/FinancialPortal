@@ -6,18 +6,67 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using FinancialPortal.Helpers;
 using FinancialPortal.Models;
+using FinancialPortal.ViewModels;
+using Microsoft.AspNet.Identity;
 
 namespace FinancialPortal.Controllers
 {
+    [Authorize]
     public class HouseholdsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private HouseholdHelper houseHelper = new HouseholdHelper();
 
         // GET: Households
         public ActionResult Index()
         {
             return View(db.Households.ToList());
+        }
+
+        // GET: CreateHouse
+        public ActionResult CreateHouse()
+        {
+            return View();
+        }
+
+        // POST: CreateHouse
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateHouse(CreateHouseVM model)
+        {
+            var newHouse = houseHelper.CreateNewHousehold(model);
+            return RedirectToAction("Details", "Households", new { id = newHouse.Id});
+        }
+
+        //POST: JoinHouse
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult JoinHouse(int id)
+        {
+            houseHelper.AddHouseMember(id);
+            return RedirectToAction("Details", new { id });
+        }
+
+        //POST: LeaveHouse
+        public ActionResult LeaveHouse(int id)
+        {
+
+            var myId = User.Identity.GetUserId();
+            var me = db.Users.FirstOrDefault(m => m.Id == myId);
+            var house = db.Households.AsNoTracking().FirstOrDefault(h => h.Id == id);
+            if (houseHelper.ImHeadOfHousehold(house))
+            {
+                //Redirect to a page that lets HoH
+                //pass HoHId to somebody else
+            }
+            else
+            {
+                houseHelper.LeaveHouse(house);
+                return me.Households.Count() > 0 ? RedirectToAction("Lobby", "Home") : RedirectToAction("Index");
+            }
+            return RedirectToAction("Details", new { id });
         }
 
         // GET: Households/Details/5
@@ -27,34 +76,11 @@ namespace FinancialPortal.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Household household = db.Households.Find(id);
+            var household = db.Households.Find(id);
             if (household == null)
             {
                 return HttpNotFound();
             }
-            return View(household);
-        }
-
-        // GET: Households/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Households/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Created,Description,HeadOfHouseId")] Household household)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Households.Add(household);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
             return View(household);
         }
 

@@ -1,0 +1,16 @@
+﻿@using FinancialPortal.ViewModels
+@model CreateHouseVM
+@{
+    ViewBag.Title = "Create House";
+}
+
+<h2>Create House</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger"})
+    @Html.TextAreaFor(m => m.Name, htmlAttributes: new { @class = "form-control"})
+    @Html.TextAreaFor(m => m.Description, htmlAttributes: new { @class = "form-control"})
+    <button type="submit">Create House</button>
+}
