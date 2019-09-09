@@ -28,6 +28,7 @@ namespace FinancialPortal.Models
         public virtual ICollection<BankAccount> BankAccounts { get; set; }
         public virtual ICollection<Budget> Budgets { get; set; }
         public virtual ICollection<ApplicationUser> Users { get; set; }
+        public virtual ICollection<Invitation> Invitations { get; set; }
         
 
         //constructor

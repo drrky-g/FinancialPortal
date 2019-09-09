@@ -519,14 +519,15 @@ namespace FinancialPortal.Migrations
                 });
             context.SaveChanges();
 
-            var shieldId = context.Households.FirstOrDefault(house => house.Name == "Shield").Id;
-            var guardiansId = context.Households.FirstOrDefault(house => house.Name == "Guardians").Id;
-            var starkId = context.Households.FirstOrDefault(house => house.Name == "Stark Industries").Id;
-            var wakandaId = context.Households.FirstOrDefault(house => house.Name == "Wakandians").Id;
+
             #endregion
 
             //Add users to their households
             #region Seed UserHouseholds
+            var shieldId = context.Households.FirstOrDefault(house => house.Name == "Shield").Id;
+            var guardiansId = context.Households.FirstOrDefault(house => house.Name == "Guardians").Id;
+            var starkId = context.Households.FirstOrDefault(house => house.Name == "Stark Industries").Id;
+            var wakandaId = context.Households.FirstOrDefault(house => house.Name == "Wakandians").Id;
 
             //Shield
             houseHelper.AddUserToHousehold("nickfury", shieldId);

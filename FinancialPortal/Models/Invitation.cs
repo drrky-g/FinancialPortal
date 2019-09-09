@@ -16,11 +16,16 @@ namespace FinancialPortal.Models
         public string Body { get; set; }
         [EmailAddress]
         public string EmailTo { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime Expire { get; set; }
+        public Guid Code { get; set; }
         //
         //virtual
         public string SenderId { get; set; }
+        public int HouseholdId { get; set; }
         //------------------------------------------
         public virtual ApplicationUser Sender { get; set; }
+        public virtual Household Household { get; set; }
 
     }
 }

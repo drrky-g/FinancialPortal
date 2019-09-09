@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using FinancialPortal.Helpers;
@@ -49,14 +50,30 @@ namespace FinancialPortal.Controllers
             return RedirectToAction("Details", new { id });
         }
 
+        //GET: SendHouseInvitation
+        public ActionResult SendHouseInvitation(int id)
+        {
+            var invite = new InviteVM { HouseholdId = id };
+            return View(invite);
+        }
+
+        //POST: SendHouseInvitation
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> SendHouseInvitation(InviteVM model)
+        {
+            var invite = houseHelper.CreateInvite(model);
+            await houseHelper.SendHouseInvite(invite);
+            return RedirectToAction("Details", "Households", new { id = model.HouseholdId });
+        }
+
         //POST: LeaveHouse
         public ActionResult LeaveHouse(int id)
         {
-
             var myId = User.Identity.GetUserId();
             var me = db.Users.FirstOrDefault(m => m.Id == myId);
             var house = db.Households.AsNoTracking().FirstOrDefault(h => h.Id == id);
-            if (houseHelper.ImHeadOfHousehold(house))
+            if (houseHelper.ImHeadOfHousehold(house) && house.Users.Count > 1)
             {
                 //Redirect to a page that lets HoH
                 //pass HoHId to somebody else
