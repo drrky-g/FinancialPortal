@@ -12,7 +12,6 @@
     using FinancialPortal.Models;
     using FinancialPortal.ViewModels;
     using Microsoft.AspNet.Identity;
-    using Microsoft.AspNet.Identity.EntityFramework;
     using Microsoft.AspNet.Identity.Owin;
 
     //[Authorize]
@@ -240,7 +239,7 @@
             {
                 db.Entry(household).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id = household.Id});
             }
             return View(household);
         }

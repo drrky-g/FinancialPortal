@@ -20,7 +20,7 @@
             var myUser = db.Users.Find(userId);
             household.Users.Add(myUser);
         }
-
+        //this is used when you accept an email invite
         public async Task AddToHouseAsync(string userId, int householdId)
         {
             var h = db.Households.Find(householdId);
