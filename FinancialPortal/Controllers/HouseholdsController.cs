@@ -1,24 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using FinancialPortal.Helpers;
-using FinancialPortal.Models;
-using FinancialPortal.ViewModels;
-using Microsoft.AspNet.Identity;
-
-namespace FinancialPortal.Controllers
+﻿namespace FinancialPortal.Controllers
 {
-    [Authorize]
+    using System;
+    using System.Data.Entity;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Threading.Tasks;
+    using System.Web;
+    using System.Web.Mvc;
+    using FinancialPortal.Helpers;
+    using FinancialPortal.Models;
+    using FinancialPortal.ViewModels;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using Microsoft.AspNet.Identity.Owin;
+
+    //[Authorize]
     public class HouseholdsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private HouseholdHelper houseHelper = new HouseholdHelper();
+        private ApplicationUserManager _userManager;
+        private ApplicationSignInManager _signInManager;
+
+        public HouseholdsController() { }
+        //overloaded controller with userManager and signInManager?
+        public HouseholdsController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
 
         // GET: Households
         public ActionResult Index()
@@ -65,6 +100,84 @@ namespace FinancialPortal.Controllers
             var invite = houseHelper.CreateInvite(model);
             await houseHelper.SendHouseInvite(invite);
             return RedirectToAction("Details", "Households", new { id = model.HouseholdId });
+        }
+
+        //GET: AcceptHouseInvite
+        public ActionResult AcceptHouseInvite(int id, Guid code)
+        {
+            var invite = db.Invitations.FirstOrDefault(i => i.Code == code);
+            if(DateTime.Now < invite.Expire)
+            {
+                var register = new InviteRegisterVM { HouseholdId = id, Email = invite.EmailTo };
+                return View(register);
+            }
+            else
+            {
+                //this view is not made yet...
+                return RedirectToAction("InviteExpire", "Households");
+            }
+            
+        }
+
+        //POST: AcceptHouseInvite
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AcceptHouseInvite(InviteRegisterVM model, HttpPostedFileBase AvatarPath)
+        {
+
+            var house = db.Households.FirstOrDefault(h => h.Id == model.HouseholdId);
+            model.AvatarPath = "/Avatars/defaultAvatar.jpg";
+            if (ImageUploader.IsWebFriendlyImage(AvatarPath))
+            {
+                var file = Path.GetFileNameWithoutExtension(AvatarPath.FileName);
+                var ext = Path.GetExtension(AvatarPath.FileName);
+
+                var slug = SlugHelper.CreateSlug($"{file}{DateTimeOffset.Now}");
+                var format = $"{slug}{ext}";
+
+                AvatarPath.SaveAs(Path.Combine(Server.MapPath("~/Avatars/"), format));
+                model.AvatarPath = "/Avatars/" + format;
+            }
+            if (ModelState.IsValid)
+            {
+                //check to see if this email is already associated with a user in the application
+                var email = db.Users.FirstOrDefault(user => user.Email == model.Email);
+                if(email == null)
+                {
+                    var newUser = new ApplicationUser
+                    {
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        Email = model.Email,
+                        Alias = model.Alias,
+                        AvatarPath = model.AvatarPath,
+                        EmailConfirmed = true,
+                        UserName = model.Email
+                    };
+                    var result = await UserManager.CreateAsync(newUser, model.Password);
+                    if (result.Succeeded)
+                    {
+                        UserManager.AddToRole(newUser.Id, "HouseholdMember");
+                        await SignInManager.SignInAsync(newUser, isPersistent: false, rememberBrowser: false);
+                        await houseHelper.AddToHouseAsync(newUser.Id, model.HouseholdId);
+                        return RedirectToAction("Details", "Households", new { id = model.HouseholdId });
+                    }
+                    else { return View(model); };
+                }
+                else
+                {
+                    house.Users.Add(email);
+                    email.Households.Add(house);
+                    UserManager.AddToRole(email.Id, "HouseholdMember");
+                    await db.SaveChangesAsync();
+                    await SignInManager.SignInAsync(email, isPersistent: false, rememberBrowser: false);
+                    return RedirectToAction("Details", "Households", new { id = model.HouseholdId });
+                    
+                }
+                
+            }
+            //if there is an error, redisplay register form
+            return View(model);
         }
 
         //POST: LeaveHouse

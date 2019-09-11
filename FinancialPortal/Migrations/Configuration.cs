@@ -430,7 +430,9 @@ namespace FinancialPortal.Migrations
 
             //
             //HouseholdMember:
+
             //nickfury
+            //-------------------------------------------
             userManager.AddToRole("blackwidow", "HouseholdMember");
             userManager.AddToRole("captmarvel", "HouseholdMember");
             userManager.AddToRole("antman", "HouseholdMember");

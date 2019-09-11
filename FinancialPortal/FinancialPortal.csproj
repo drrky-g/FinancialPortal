@@ -196,6 +196,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\CreateHouseVM.cs" />
+    <Compile Include="ViewModels\InviteRegisterVM.cs" />
+    <Compile Include="ViewModels\InviteVM.cs" />
     <Compile Include="ViewModels\UserProfile.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -554,6 +556,8 @@
     <Content Include="Views\Households\Index.cshtml" />
     <Content Include="Views\Home\Lobby.cshtml" />
     <Content Include="Views\Households\CreateHouse.cshtml" />
+    <Content Include="Views\Households\SendHouseInvitation.cshtml" />
+    <Content Include="Views\Households\AcceptHouseInvite.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

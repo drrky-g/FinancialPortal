@@ -1,0 +1,17 @@
+﻿@using FinancialPortal.ViewModels;
+@model InviteVM
+@{
+    ViewBag.Title = "SendHouseInvitation";
+}
+
+<h2>SendHouseInvitation</h2>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    @Html.ValidationSummary();
+    @Html.HiddenFor(m => m.HouseholdId)
+    @Html.TextBoxFor(m => m.RecieverEmail)
+    @Html.TextBoxFor(m => m.InviteBody)
+    <button type="submit">Send Invite</button>
+}
+

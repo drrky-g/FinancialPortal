@@ -5,7 +5,7 @@
 }
 
 <h2>Details</h2>
-
+@Html.ActionLink("Send an Invite", "SendHouseInvitation", new { id = Model.Id}, htmlAttributes: new { @class = "btn"})
 <div>
     <h4>Household</h4>
     <hr />
@@ -43,6 +43,12 @@
         </dd>
 
     </dl>
+    <ul>
+        @foreach(var user in Model.Users.OrderByDescending(u => u.FullName))
+        {
+            <li>@user.FullName</li>
+        }
+    </ul>
 </div>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |

@@ -224,7 +224,7 @@
                     Alias = model.Alias,
                     AvatarPath = model.AvatarPath
                 };
-
+                //UserManager.AddToRole(user.Id, "NoHousehold");
 
                 var result = await UserManager.CreateAsync(user, model.Password);
 
@@ -293,7 +293,6 @@
                     Subject = "Password Recovery - MoneyApp",
                     Body = $"Click <a href={cb}>here</a> to reset your MoneyApp password."
                 };
-
                 var svc = new EmailService();
                 await svc.SendAsync(email);
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
