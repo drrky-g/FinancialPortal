@@ -1,11 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace FinancialPortal.Helpers
+﻿namespace FinancialPortal.Helpers
 {
-    public class BankAccountHelper
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Web.Mvc;
+    public class BankAccountHelper : InstanceHelper
     {
+        public IEnumerable<SelectListItem> GetAccountTypeSelctList()
+        {
+            //create a list of selectlist items based off of db account types
+            List<SelectListItem> types = db.AccountTypes.AsNoTracking()
+                .Select(type => new SelectListItem
+                {
+                    Value = type.Id.ToString(),
+                    Text = type.Name
+                }).ToList();
+            //set the default first selection
+            var initialSelect = new SelectListItem()
+            {
+                Value = null,
+                Text = "-- Account Type --"
+            };
+            types.Insert(0, initialSelect);
+            return new SelectList(types, "Value", "Text");
+        }
     }
 }

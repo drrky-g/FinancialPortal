@@ -20,7 +20,9 @@
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private UserHelper userHelper = new UserHelper();
         private ApplicationDbContext db = new ApplicationDbContext();
+        private ImageUploader imageHelper = new ImageUploader();
 
         public AccountController()
         {
@@ -202,37 +204,18 @@
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model, HttpPostedFileBase AvatarPath)
         {
-            model.AvatarPath = "/Avatars/defaultAvatar.jpg";
-            if (ImageUploader.IsWebFriendlyImage(AvatarPath))
-            {
-                var file = Path.GetFileNameWithoutExtension(AvatarPath.FileName);
-                var ext = Path.GetExtension(AvatarPath.FileName);
+            var image = imageHelper.StoreAvatar(AvatarPath);
 
-                var slug = SlugHelper.CreateSlug($"{file}{DateTimeOffset.Now}");
-                var format = $"{slug}{ext}";
-
-                AvatarPath.SaveAs(Path.Combine(Server.MapPath("~/Avatars/"), format));
-                model.AvatarPath = "/Avatars/" + format;
-            }
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser
-                {
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Email = model.Email,
-                    Alias = model.Alias,
-                    AvatarPath = model.AvatarPath
-                };
-                //UserManager.AddToRole(user.Id, "NoHousehold");
-
+                var user = userHelper.AssignRegisterPropertiesToUser(model, image);
                 var result = await UserManager.CreateAsync(user, model.Password);
-
                 if (result.Succeeded)
                 {
+                    UserManager.AddToRole(user.Id, "NoHousehold");
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code=code }, protocol: Request.Url.Scheme);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Url.Scheme);
                     var emailFrom = WebConfigurationManager.AppSettings["smtpEmailFrom"];
                     var email = new MailMessage(emailFrom, model.Email)
                     {
@@ -240,10 +223,8 @@
                         Body = $"Please click <a href={callbackUrl}>here</a> to confirm your account.",
                         IsBodyHtml = true
                     };
-
                     var svc = new EmailService();
                     await svc.SendAsync(email);
-
                     return RedirectToAction("Lobby", "Home");
                 }
                 AddErrors(result);

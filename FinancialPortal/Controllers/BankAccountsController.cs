@@ -35,7 +35,7 @@
         public ActionResult Create()
         {
             ViewBag.HouseholdId = new SelectList(db.Households, "Id", "Name");
-            ViewBag.AccountTypeId = new SelectList(db.AccountTypes, "Id", "Name");
+            ViewBag.AccountTypeId = new SelectList(db.Accounts, "Id", "Name");
             return View();
         }
 
@@ -54,7 +54,7 @@
             }
 
             ViewBag.HouseholdId = new SelectList(db.Households, "Id", "Name", bankAccount.HouseholdId);
-            ViewBag.AccountTypeId = new SelectList(db.AccountTypes, "Id", "Name", bankAccount.AccountTypeId);
+            ViewBag.AccountTypeId = new SelectList(db.Accounts, "Id", "Name", bankAccount.AccountTypeId);
             return View(bankAccount);
         }
 
@@ -71,7 +71,7 @@
                 return HttpNotFound();
             }
             ViewBag.HouseholdId = new SelectList(db.Households, "Id", "Name", bankAccount.HouseholdId);
-            ViewBag.AccountTypeId = new SelectList(db.AccountTypes, "Id", "Name", bankAccount.AccountTypeId);
+            ViewBag.AccountTypeId = new SelectList(db.Accounts, "Id", "Name", bankAccount.AccountTypeId);
             return View(bankAccount);
         }
 
@@ -89,7 +89,7 @@
                 return RedirectToAction("Index");
             }
             ViewBag.HouseholdId = new SelectList(db.Households, "Id", "Name", bankAccount.HouseholdId);
-            ViewBag.AccountTypeId = new SelectList(db.AccountTypes, "Id", "Name", bankAccount.AccountTypeId);
+            ViewBag.AccountTypeId = new SelectList(db.Accounts, "Id", "Name", bankAccount.AccountTypeId);
             return View(bankAccount);
         }
 

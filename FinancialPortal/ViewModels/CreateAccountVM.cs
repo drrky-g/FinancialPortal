@@ -2,16 +2,20 @@
 {
     using FinancialPortal.Helpers;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Web.Mvc;
 
     public class CreateAccountVM : InstanceHelper
     {
-        public string Description { get; set; }
-        public float StartingBalance { get; set; }
-        public float CurrentBalance { get; set; }
-        public float LowBalanceThreshold { get; set; }
-        public IEnumerable<SelectListItem> AccountType { get; set; } = new SelectList(db.AccountTypes, "Id", "Name");
-        
-        //still need a multiselectlist for accounttype
+        public BankAccountHelper accountHelper = new BankAccountHelper();
+
+        public string BName { get; set; }
+        public string BDescription { get; set; }
+        public float BStartingBalance { get; set; }
+        public float BCurrentBalance { get; set; }
+        public float BLowBalanceThreshold { get; set; }
+        //AccountType
+        public int SelectedAccountTypeId { get; set; }
+        public IEnumerable<SelectListItem> BAccountType { get; set; }
     }
 }

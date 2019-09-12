@@ -1,5 +1,7 @@
 ﻿namespace FinancialPortal.Helpers
 {
+    using FinancialPortal.Models;
+    using System;
     using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
@@ -7,6 +9,8 @@
     using System.Web;
     public class ImageUploader
     {
+        private HttpServerUtilityWrapper Server = new HttpServerUtilityWrapper(HttpContext.Current.Server);
+
         public static bool IsWebFriendlyImage(HttpPostedFileBase file)
         {
             if (file == null)
@@ -73,7 +77,25 @@
             {
                 return false;
             }
+        }
 
+        public string StoreAvatar(HttpPostedFileBase file)
+        {
+            //check to see if image meets our specifications,
+            //then will save that image and return the path.
+            //if image doesnt meet specifications, return default image path.
+            if (IsWebFriendlyImage(file))
+            {
+                var fileName = Path.GetFileNameWithoutExtension(file.FileName);
+                var ext = Path.GetExtension(file.FileName);
+                var unique = Guid.NewGuid();
+                var format = $"{SlugHelper.CreateSlug($"{fileName}{unique}")}{ext}";
+                file.SaveAs(Path.Combine(Server.MapPath("~/Avatars/"), format));
+                return $"/Avatars/{format}";
+            }
+            else
+                return "/Avatars/defaultAvatar.jpg";
+            
         }
     }
 }

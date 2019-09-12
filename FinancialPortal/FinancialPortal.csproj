@@ -176,11 +176,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\BankAccountHelper.cs" />
     <Compile Include="Helpers\HouseholdHelper.cs" />
     <Compile Include="Helpers\ImageUploader.cs" />
     <Compile Include="Helpers\InstanceHelper.cs" />
     <Compile Include="Helpers\SeedHelper.cs" />
     <Compile Include="Helpers\SlugHelper.cs" />
+    <Compile Include="Helpers\UserHelper.cs" />
+    <Compile Include="Helpers\WizardHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountType.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -196,7 +199,10 @@
     <Compile Include="Models\TransactionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\CreateAccountVM.cs" />
+    <Compile Include="ViewModels\CreateBudgetVM.cs" />
     <Compile Include="ViewModels\CreateHouseVM.cs" />
+    <Compile Include="ViewModels\HouseWizardVM.cs" />
     <Compile Include="ViewModels\InviteRegisterVM.cs" />
     <Compile Include="ViewModels\InviteVM.cs" />
     <Compile Include="ViewModels\UserProfile.cs" />
@@ -564,6 +570,7 @@
     <Content Include="Views\BankAccounts\Details.cshtml" />
     <Content Include="Views\BankAccounts\Edit.cshtml" />
     <Content Include="Views\BankAccounts\Index.cshtml" />
+    <Content Include="Views\Households\InviteExpire.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

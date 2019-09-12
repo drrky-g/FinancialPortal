@@ -2,7 +2,6 @@
 {
     using System;
     using System.Data.Entity;
-    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
@@ -19,6 +18,10 @@
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private HouseholdHelper houseHelper = new HouseholdHelper();
+        private UserHelper userHelper = new UserHelper();
+        private ImageUploader imageHelper = new ImageUploader();
+        private WizardHelper wizardHelper = new WizardHelper();
+        private BankAccountHelper accountHelper = new BankAccountHelper();
         private ApplicationUserManager _userManager;
         private ApplicationSignInManager _signInManager;
 
@@ -58,6 +61,31 @@
         public ActionResult Index()
         {
             return View(db.Households.ToList());
+        }
+
+        //GET: CreateHouseWithWizard
+        public ActionResult CreateHouseWithWizard()
+        {
+            var accountVM = new CreateAccountVM
+            {
+                BAccountType = accountHelper.GetAccountTypeSelctList()
+            };
+            var wizard = new HouseWizardVM
+            {
+                CreateAccount = accountVM
+            };
+            return View(wizard);
+        }
+
+        //POST: CreateHouseWithWizard
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateHouseWithWizard(HouseWizardVM model)
+        {
+            var houseId = wizardHelper.CreateHouseAndGetId(model.CreateHouse);
+            wizardHelper.CreateAccount(model.CreateAccount, houseId);
+            wizardHelper.CreateBudget(model.CreateBudget, houseId);
+            return RedirectToAction("Details", "Households", new { id = houseId });
         }
 
         // GET: CreateHouse
@@ -125,34 +153,14 @@
         {
 
             var house = db.Households.FirstOrDefault(h => h.Id == model.HouseholdId);
-            model.AvatarPath = "/Avatars/defaultAvatar.jpg";
-            if (ImageUploader.IsWebFriendlyImage(AvatarPath))
-            {
-                var file = Path.GetFileNameWithoutExtension(AvatarPath.FileName);
-                var ext = Path.GetExtension(AvatarPath.FileName);
-
-                var slug = SlugHelper.CreateSlug($"{file}{DateTimeOffset.Now}");
-                var format = $"{slug}{ext}";
-
-                AvatarPath.SaveAs(Path.Combine(Server.MapPath("~/Avatars/"), format));
-                model.AvatarPath = "/Avatars/" + format;
-            }
+            var image = imageHelper.StoreAvatar(AvatarPath);
             if (ModelState.IsValid)
             {
                 //check to see if this email is already associated with a user in the application
                 var email = db.Users.FirstOrDefault(user => user.Email == model.Email);
                 if(email == null)
-                {
-                    var newUser = new ApplicationUser
-                    {
-                        FirstName = model.FirstName,
-                        LastName = model.LastName,
-                        Email = model.Email,
-                        Alias = model.Alias,
-                        AvatarPath = model.AvatarPath,
-                        EmailConfirmed = true,
-                        UserName = model.Email
-                    };
+                {   var newUser = userHelper.AssignRegisterPropertiesToUser(model, image);
+                    newUser.UserName = model.Email;
                     var result = await UserManager.CreateAsync(newUser, model.Password);
                     if (result.Succeeded)
                     {
@@ -165,19 +173,16 @@
                 }
                 else
                 {
-                    house.Users.Add(email);
-                    email.Households.Add(house);
-                    UserManager.AddToRole(email.Id, "HouseholdMember");
-                    await db.SaveChangesAsync();
-                    await SignInManager.SignInAsync(email, isPersistent: false, rememberBrowser: false);
-                    return RedirectToAction("Details", "Households", new { id = model.HouseholdId });
-                    
+                    //redirect to a view that tells user their email is already associated with an account
+                    return RedirectToAction("???", "Households");
                 }
-                
             }
-            //if there is an error, redisplay register form
             return View(model);
         }
+
+        //GET: InviteExpire
+        public ActionResult InviteExpire()
+        { return View(); }
 
         //POST: LeaveHouse
         public ActionResult LeaveHouse(int id)
@@ -189,13 +194,13 @@
             {
                 //Redirect to a page that lets HoH
                 //pass HoHId to somebody else
+                return RedirectToAction("???", "Households");
             }
             else
             {
                 houseHelper.LeaveHouse(house);
                 return me.Households.Count() > 0 ? RedirectToAction("Lobby", "Home") : RedirectToAction("Index");
             }
-            return RedirectToAction("Details", new { id });
         }
 
         // GET: Households/Details/5
