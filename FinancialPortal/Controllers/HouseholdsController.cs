@@ -26,7 +26,8 @@
         private ApplicationSignInManager _signInManager;
 
         public HouseholdsController() { }
-        //overloaded controller with userManager and signInManager?
+
+        //dependency injection
         public HouseholdsController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
@@ -140,7 +141,6 @@
             }
             else
             {
-                //this view is not made yet...
                 return RedirectToAction("InviteExpire", "Households");
             }
             
@@ -174,15 +174,32 @@
                 else
                 {
                     //redirect to a view that tells user their email is already associated with an account
-                    return RedirectToAction("???", "Households");
+                    return RedirectToAction("AccountExists", "Households");
                 }
             }
             return View(model);
         }
 
+        //GET: Error
+        public ActionResult Error()
+        {
+            ViewBag.Error = "An error occured.";
+            return View();
+        }
+
+        //GET: AccountExists
+        public ActionResult AccountExists()
+        {
+            ViewBag.Error = "A user with this email already exists. please sign in with that account.";
+            return View("Error");
+        }
+
         //GET: InviteExpire
         public ActionResult InviteExpire()
-        { return View(); }
+        {
+            ViewBag.Error = "Your invitation expired. Please request another invitation to this house.";
+            return View("Error");
+        }
 
         //POST: LeaveHouse
         public ActionResult LeaveHouse(int id)
