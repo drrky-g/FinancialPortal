@@ -151,7 +151,6 @@
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AcceptHouseInvite(InviteRegisterVM model, HttpPostedFileBase AvatarPath)
         {
-
             var house = db.Households.FirstOrDefault(h => h.Id == model.HouseholdId);
             var image = imageHelper.StoreAvatar(AvatarPath);
             if (ModelState.IsValid)
@@ -190,7 +189,7 @@
         //GET: AccountExists
         public ActionResult AccountExists()
         {
-            ViewBag.Error = "A user with this email already exists. please sign in with that account.";
+            ViewBag.Error = "A user with this email already exists. Please sign in with that account.";
             return View("Error");
         }
 
@@ -206,7 +205,7 @@
         {
             var myId = User.Identity.GetUserId();
             var me = db.Users.FirstOrDefault(m => m.Id == myId);
-            var house = db.Households.AsNoTracking().FirstOrDefault(h => h.Id == id);
+            var house = db.Households.FirstOrDefault(h => h.Id == id);
             if (houseHelper.ImHeadOfHousehold(house) && house.Users.Count > 1)
             {
                 //Redirect to a page that lets HoH

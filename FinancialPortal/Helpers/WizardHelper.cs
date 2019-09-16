@@ -38,12 +38,11 @@
             {
                 Description = model.BDescription,
                 StartingBalance = model.BStartingBalance,
-                CurrentBalance = model.BCurrentBalance,
+                CurrentBalance = model.BStartingBalance,
                 LowBalanceThreshold = model.BLowBalanceThreshold,
                 Created = DateTime.Now,
                 HouseholdId = houseId,
-                //TODO: figure out how to set a selectlist to a VM
-                //AccountTypeId = model.BAccountType
+                AccountTypeId = model.SelectedAccountTypeId
             };
             db.Accounts.Add(newAccount);
             db.SaveChanges();

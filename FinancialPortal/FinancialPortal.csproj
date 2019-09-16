@@ -508,6 +508,7 @@
     <Content Include="Images\test3.jpg" />
     <Content Include="Images\tim-logo.png" />
     <Content Include="private.config" />
+    <None Include="Properties\PublishProfiles\DGFinancialPortal - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -571,6 +572,8 @@
     <Content Include="Views\BankAccounts\Edit.cshtml" />
     <Content Include="Views\BankAccounts\Index.cshtml" />
     <Content Include="Views\Households\Error.cshtml" />
+    <Content Include="Views\Shared\_NavPartial.cshtml" />
+    <Content Include="Views\Households\CreateHouseWithWizard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

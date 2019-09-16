@@ -22,7 +22,7 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <!-- CSS Files -->
-    <link href="~/Content/material-kit.css" rel="stylesheet" />
+    @Styles.Render("~/bundles/Content/css")
 </head>
 
 <body class="signup-page header-filter" filter-color="green" style="background-image: url(/Images/money.jpg); background-size: cover; background-position: top center;">
@@ -76,7 +76,7 @@
                                             Have An Account?
                                         </h4>
                                         <p class="description">
-                                            @Html.ActionLink("Click here to sign in.", "LogIn", "Account", null, htmlAttributes: new { @class = "text-success"})
+                                            @Html.ActionLink("Click here to sign in.", "LogIn", "Account", null, htmlAttributes: new { @class = "text-success" })
                                         </p>
                                     </div>
                                 </div>
@@ -185,18 +185,10 @@
             </div>
         </div>
     </footer>
-    <!--   Core JS Files   -->
-    <script src="~/Scripts/Material/jquery.min.js"></script>
-    <script src="~/Scripts/Material/popper.min.js"></script>
-    <script src="~/Scripts/Material/bootstrap-material-design.min.js"></script>
-    <script src="~/Scripts/Material/moment.min.js"></script>
-    <!-- Place this tag in your head or just before your close body tag. -->
+    @Scripts.Render("~/bundles/Scripts")
+    @Scripts.Render("~/bundles/jqueryval")
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="~/Scripts/Material/material-kit.js"></script>
 
-    @section Scripts {
-        @Scripts.Render("~/bundles/jqueryval")
-    }
     <!--
      =========================================================
      Material Kit PRO - v2.1.1

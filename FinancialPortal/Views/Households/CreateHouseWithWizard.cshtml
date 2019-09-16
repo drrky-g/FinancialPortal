@@ -1,0 +1,116 @@
+﻿@using FinancialPortal.ViewModels
+@model HouseWizardVM
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken();
+                @Html.ValidationSummary(false, "");
+
+                <h3 class="title">House Details</h3>
+                <p class="description">
+                    Name your house and give a short description.
+                </p>
+                <!-- household-->
+                <div class="row">
+                    <br />
+                    <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                            @Html.LabelFor(m => m.CreateHouse.Name, new { @class = "bmd-label-floating" })
+                            @Html.TextBoxFor(m => m.CreateHouse.Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                            @Html.LabelFor(m => m.CreateHouse.Description, new { @class = "bmd-label-floating" })
+                            @Html.TextBoxFor(m => m.CreateHouse.Description, htmlAttributes: new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <h3 class="title">Account Details</h3>
+                <p class="description">
+                    Add your first account to your house.
+                </p>
+                <!-- bank account-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                            @Html.LabelFor(m => m.CreateAccount.BName, new { @class = "bmd-label-floating" })
+                            @Html.TextBoxFor(m => m.CreateAccount.BName, htmlAttributes: new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                            @Html.LabelFor(m => m.CreateAccount.BDescription, new { @class = "bmd-label-floating" })
+                            @Html.TextBoxFor(m => m.CreateAccount.BDescription, htmlAttributes: new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group bmd-form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" style="padding-left:0px;">
+                                        <i class="material-icons">attach_money</i>
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.CreateAccount.BStartingBalance, htmlAttributes: new { @class = "form-control", placeholder = "Starting Balance", value = "" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group bmd-form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" style="padding-left:0px;">
+                                        <i class="material-icons">attach_money</i>
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.CreateAccount.BLowBalanceThreshold, htmlAttributes: new { @class = "form-control", placeholder = "Low Balance Threshold", value = "" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group bmd-form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" style="padding-left:0px;">
+                                        <i class="material-icons">
+                                            account_balance
+                                        </i>
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.CreateAccount.SelectedAccountTypeId, new SelectList(Model.CreateAccount.BAccountType, "Value", "Text"), new { @class = "form-control text-muted", style = "height:36px;" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- budget -->
+                <h3 class="title">Budgets</h3>
+                <p class="description">
+                    Provide budgets for your house. These will be used to organize your transactions. (Utilities, Groceries, Food, etc.)
+                </p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                            @Html.TextBoxFor(m => m.CreateBudget.BudgetName, new { @class = "form-control", placeholder = "Budget Name" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                            @Html.TextBoxFor(m => m.CreateBudget.BudgetCap, new { @class = "form-control", placeholder = "Budget Limit"})
+                        </div>
+                    </div>
+                </div>
+                <!-- submit -->
+                <button type="submit" class="btn btn-primary btn-round">Build House</button>
+            }
+        </div>
+    </div>
+@section scripts{
+    <script>
+        //formats the number inputs for the placeholders
+        $(document).ready(function () { $('#CreateAccount_BStartingBalance').attr('value', null); $('#CreateAccount_BLowBalanceThreshold').attr('value', null); $('#CreateBudget_BudgetCap').attr('value', null); })
+    </script>
+    }

@@ -10,6 +10,7 @@ namespace FinancialPortal.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public float Cap { get; set; }
         //
         //virtual
         public int HouseholdId { get; set; }

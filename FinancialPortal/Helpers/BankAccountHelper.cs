@@ -8,7 +8,7 @@
         public IEnumerable<SelectListItem> GetAccountTypeSelctList()
         {
             //create a list of selectlist items based off of db account types
-            List<SelectListItem> types = db.AccountTypes.AsNoTracking()
+            List<SelectListItem> types = db.AccountTypes
                 .Select(type => new SelectListItem
                 {
                     Value = type.Id.ToString(),
@@ -20,6 +20,7 @@
                 Value = null,
                 Text = "-- Account Type --"
             };
+            //add default to the top
             types.Insert(0, initialSelect);
             return new SelectList(types, "Value", "Text");
         }
