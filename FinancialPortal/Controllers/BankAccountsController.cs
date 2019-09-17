@@ -5,9 +5,14 @@
     using System.Net;
     using System.Web.Mvc;
     using FinancialPortal.Models;
+    using FinancialPortal.ViewModels;
+    using FinancialPortal.Helpers;
+
     public class BankAccountsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private BankAccountHelper bank = new BankAccountHelper();
+        private WizardHelper wizard = new WizardHelper();
 
         // GET: BankAccounts
         public ActionResult Index()
@@ -32,11 +37,14 @@
         }
 
         // GET: BankAccounts/Create
-        public ActionResult Create()
+        public ActionResult Create(int houseId)
         {
-            ViewBag.HouseholdId = new SelectList(db.Households, "Id", "Name");
-            ViewBag.AccountTypeId = new SelectList(db.Accounts, "Id", "Name");
-            return View();
+            var createAccount = new AccountWithHouseVM
+            {
+                HouseholdId = houseId,
+                BAccountType = bank.GetAccountTypeSelectList()
+            };
+            return View(createAccount);
         }
 
         // POST: BankAccounts/Create
@@ -44,18 +52,17 @@
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Description,StartingBalance,CurrentBalance,Created,LowBalanceThreshold,HouseholdId,AccountTypeId")] BankAccount bankAccount)
+        public ActionResult Create([Bind(Include = "Id,Description,StartingBalance,CurrentBalance,Created,LowBalanceThreshold,HouseholdId,AccountTypeId")] AccountWithHouseVM model)
         {
+            
+
             if (ModelState.IsValid)
             {
-                db.Accounts.Add(bankAccount);
+                wizard.CreateAccount(model, model.HouseholdId);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Households", new { id = model.HouseholdId });
             }
-
-            ViewBag.HouseholdId = new SelectList(db.Households, "Id", "Name", bankAccount.HouseholdId);
-            ViewBag.AccountTypeId = new SelectList(db.Accounts, "Id", "Name", bankAccount.AccountTypeId);
-            return View(bankAccount);
+            return View(model);
         }
 
         // GET: BankAccounts/Edit/5

@@ -1,5 +1,11 @@
 ﻿@using FinancialPortal.ViewModels
 @model HouseWizardVM
+
+@{ 
+    ViewBag.Title = "Build House";
+    ViewBag.Header = "";
+    ViewBag.SubHeader = "";
+}
     <div class="row">
         <div class="col-md-12">
             @using (Html.BeginForm())
@@ -55,7 +61,7 @@
                                         <i class="material-icons">attach_money</i>
                                     </span>
                                 </div>
-                                @Html.TextBoxFor(m => m.CreateAccount.BStartingBalance, htmlAttributes: new { @class = "form-control", placeholder = "Starting Balance", value = "" })
+                                @Html.TextBoxFor(m => m.CreateAccount.BStartingBalance, htmlAttributes: new { @class = "form-control", value = "", placeholder = "Starting Balance" })
                             </div>
                         </div>
                     </div>
@@ -64,7 +70,7 @@
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" style="padding-left:0px;">
-                                        <i class="material-icons">attach_money</i>
+                                        <i class="material-icons">warning</i>
                                     </span>
                                 </div>
                                 @Html.TextBoxFor(m => m.CreateAccount.BLowBalanceThreshold, htmlAttributes: new { @class = "form-control", placeholder = "Low Balance Threshold", value = "" })
@@ -89,17 +95,20 @@
                 <!-- budget -->
                 <h3 class="title">Budgets</h3>
                 <p class="description">
-                    Provide budgets for your house. These will be used to organize your transactions. (Utilities, Groceries, Food, etc.)
+                    Provide budgets for your house. These will be used to organize your transactions.<br />
+                    (Utilities, Groceries, Entertainment, etc.)
                 </p>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group bmd-form-group">
-                            @Html.TextBoxFor(m => m.CreateBudget.BudgetName, new { @class = "form-control", placeholder = "Budget Name" })
+                            @Html.LabelFor(m => m.CreateBudget.BudgetName, htmlAttributes: new { @class = "bmd-label-floating"})
+                            @Html.TextBoxFor(m => m.CreateBudget.BudgetName, new { @class = "form-control" })
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group bmd-form-group">
-                            @Html.TextBoxFor(m => m.CreateBudget.BudgetCap, new { @class = "form-control", placeholder = "Budget Limit"})
+                            @Html.LabelFor(m => m.CreateBudget.BudgetCap, htmlAttributes: new { @class = "bmd-label-floating"})
+                            @Html.TextBoxFor(m => m.CreateBudget.BudgetCap, new { @class = "form-control" })
                         </div>
                     </div>
                 </div>

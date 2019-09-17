@@ -169,9 +169,12 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BankAccountsController.cs" />
+    <Compile Include="Controllers\BudgetItemsController.cs" />
+    <Compile Include="Controllers\BudgetsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HouseholdsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\TransactionController.cs" />
     <Compile Include="Enumerations\MyRole.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -199,12 +202,14 @@
     <Compile Include="Models\TransactionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\BudgetItemVM.cs" />
     <Compile Include="ViewModels\CreateAccountVM.cs" />
     <Compile Include="ViewModels\CreateBudgetVM.cs" />
     <Compile Include="ViewModels\CreateHouseVM.cs" />
     <Compile Include="ViewModels\HouseWizardVM.cs" />
     <Compile Include="ViewModels\InviteRegisterVM.cs" />
     <Compile Include="ViewModels\InviteVM.cs" />
+    <Compile Include="ViewModels\TransactionVM.cs" />
     <Compile Include="ViewModels\UserProfile.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -577,6 +582,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\BudgetItems\" />
+    <Folder Include="Views\Budgets\" />
+    <Folder Include="Views\Transaction\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

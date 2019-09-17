@@ -5,13 +5,20 @@
     using Microsoft.AspNet.Identity;
     using System;
     using System.Web;
+
     public class WizardHelper : InstanceHelper
     {
-        public void ManageWizard(HouseWizardVM model)
+        /// <summary>
+        /// Pass 'House Wizard' View Model and create the house, budget, and account associated with the form
+        /// </summary>
+        /// <param name="model">HouseWizardVM</param>
+        /// <returns>houseId</returns>
+        public int ManageWizard(HouseWizardVM model)
         {
             var houseId = CreateHouseAndGetId(model.CreateHouse);
             CreateAccount(model.CreateAccount, houseId);
             CreateBudget(model.CreateBudget, houseId);
+            return houseId;
         }
 
         public int CreateHouseAndGetId(CreateHouseVM model)
@@ -28,7 +35,6 @@
             };
             newHouse.Users.Add(me);
             db.Households.Add(newHouse);
-            db.SaveChanges();
             return newHouse.Id;
         }
 
@@ -45,7 +51,6 @@
                 AccountTypeId = model.SelectedAccountTypeId
             };
             db.Accounts.Add(newAccount);
-            db.SaveChanges();
         }
 
         public void CreateBudget(CreateBudgetVM model, int houseId)
@@ -56,7 +61,6 @@
                 HouseholdId = houseId
             };
             db.Budgets.Add(newBudget);
-            db.SaveChanges();
         }
     }
 }

@@ -79,19 +79,14 @@
         public ActionResult UpdateProfile([Bind( Include = "Id,FirstName,LastName,Alias,Email,AvatarPath")]UserProfileVM changes, HttpPostedFileBase picture)
         {
             var me = db.Users.Find(changes.Id);
-            if (ImageUploader.IsWebFriendlyImage(picture))
-            {
-                var file = Path.GetFileNameWithoutExtension(picture.FileName);
-                var ext = Path.GetExtension(picture.FileName);
-                var format = $"{SlugHelper.CreateSlug($"{file}{DateTimeOffset.Now}")}{ext}";
-                picture.SaveAs(Path.Combine(Server.MapPath("~/Avatars/"), format));
-                me.AvatarPath = "/Avatars/" + format;
-            }
+            var image = imageHelper.StoreAvatar(picture);
 
             me.FirstName = changes.FirstName;
             me.LastName = changes.LastName;
             me.Email = changes.Email;
             me.Alias = changes.Alias;
+            me.AvatarPath = image;
+            db.SaveChanges();
 
             return View(changes);
         }

@@ -5,7 +5,7 @@
     using System.Web.Mvc;
     public class BankAccountHelper : InstanceHelper
     {
-        public IEnumerable<SelectListItem> GetAccountTypeSelctList()
+        public IEnumerable<SelectListItem> GetAccountTypeSelectList()
         {
             //create a list of selectlist items based off of db account types
             List<SelectListItem> types = db.AccountTypes

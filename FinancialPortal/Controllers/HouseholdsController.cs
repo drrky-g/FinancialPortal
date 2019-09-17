@@ -69,7 +69,7 @@
         {
             var accountVM = new CreateAccountVM
             {
-                BAccountType = accountHelper.GetAccountTypeSelctList()
+                BAccountType = accountHelper.GetAccountTypeSelectList()
             };
             var wizard = new HouseWizardVM
             {
@@ -83,9 +83,8 @@
         [ValidateAntiForgeryToken]
         public ActionResult CreateHouseWithWizard(HouseWizardVM model)
         {
-            var houseId = wizardHelper.CreateHouseAndGetId(model.CreateHouse);
-            wizardHelper.CreateAccount(model.CreateAccount, houseId);
-            wizardHelper.CreateBudget(model.CreateBudget, houseId);
+            var houseId = wizardHelper.ManageWizard(model);
+            db.SaveChanges();
             return RedirectToAction("Details", "Households", new { id = houseId });
         }
 
